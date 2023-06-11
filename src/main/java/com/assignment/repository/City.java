@@ -3,6 +3,8 @@ package com.assignment.repository;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonValue;
 import lombok.AllArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @AllArgsConstructor
 public enum City {
@@ -24,6 +26,6 @@ public enum City {
                 return c;
             }
         }
-        throw new IllegalArgumentException("Unexpected value '" + value + "'");
+        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "city value cannot be empty or null");
     }
 }
