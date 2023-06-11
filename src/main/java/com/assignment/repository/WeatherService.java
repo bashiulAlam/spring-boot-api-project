@@ -23,7 +23,12 @@ public class WeatherService {
                 .map(City::fromValue)
                 .orElse(null);
 
-        return weatherRepository.findWeather(givenCity, localDate);
+        if (localDate == null)
+            return weatherRepository.findWeatherByCity(givenCity);
+        else if (city == null)
+            return weatherRepository.findWeatherByDate(localDate);
+        else
+            return weatherRepository.findWeather(givenCity, localDate);
     }
 
     public Weather save(Weather weather) {

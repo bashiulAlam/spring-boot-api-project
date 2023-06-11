@@ -11,24 +11,40 @@ import java.util.Optional;
 
 @Repository
 public class WeatherRepository {
-    Map<String, Weather> weatherStore = new HashMap<String, Weather>();
+    private List<Weather> weatherList = new ArrayList<>();
 
     public Weather save(Weather weather) {
-        weatherStore.put(getKey(weather.getCity(), weather.getDate()), weather);
+        weatherList.add(weather);
         return weather;
     }
 
-    public List<Weather> findWeather(City city, LocalDate date) {
-        Weather weather = weatherStore.get(getKey(city, date));
+    public List<Weather> findWeatherByCity(City city) {
         List<Weather> result = new ArrayList<>();
-        if (weather != null) {
-            result.add(weather);
+        for (Weather weather : weatherList) {
+            if (weather.getCity().equals(city)) {
+                result.add(weather);
+            }
         }
         return result;
     }
 
-    public String getKey(City city, LocalDate date) {
-        return Optional.ofNullable(city).map(City::toString).orElse("") + "." +
-                Optional.ofNullable(date).map(LocalDate::toString).orElse("");
+    public List<Weather> findWeatherByDate(LocalDate date) {
+        List<Weather> result = new ArrayList<>();
+        for (Weather weather : weatherList) {
+            if (weather.getDate().equals(date)) {
+                result.add(weather);
+            }
+        }
+        return result;
+    }
+
+    public List<Weather> findWeather(City city, LocalDate date) {
+        List<Weather> result = new ArrayList<>();
+        for (Weather weather : weatherList) {
+            if (weather.getCity().equals(city) && weather.getDate().equals(date)) {
+                result.add(weather);
+            }
+        }
+        return result;
     }
 }
