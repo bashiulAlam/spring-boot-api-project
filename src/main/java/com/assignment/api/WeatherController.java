@@ -26,7 +26,7 @@ public class WeatherController {
         return weatherService.findWeather(city, date);
     }
 
-    @PostMapping("/weather")
+    @PostMapping(value = "/weather", consumes = "application/json")
     public Weather postWeather(@RequestBody Weather weather) {
         return weatherService.save(weather);
     }
