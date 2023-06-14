@@ -7,6 +7,7 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
@@ -24,14 +25,15 @@ public class WeatherService {
                 .orElse(null);
 
         if (localDate == null)
-            return weatherRepository.findWeatherByCity(givenCity);
+            return weatherRepository.findByCity(givenCity);
         else if (city == null)
-            return weatherRepository.findWeatherByDate(localDate);
+            return weatherRepository.findByDate(localDate);
         else
-            return weatherRepository.findWeather(givenCity, localDate);
+            return weatherRepository.findByCityAndDate(givenCity, localDate);
     }
 
     public Weather save(Weather weather) {
+        weather.setId(UUID.randomUUID());
         return weatherRepository.save(weather);
     }
 }

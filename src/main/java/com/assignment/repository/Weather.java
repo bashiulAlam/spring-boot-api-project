@@ -9,19 +9,31 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.redis.core.RedisHash;
+import org.springframework.data.redis.core.index.Indexed;
 
 import java.time.LocalDate;
+import java.util.UUID;
 
 @Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
+@RedisHash("Weather")
 public class Weather {
+    @Id
+    private UUID id;
+
+    @Indexed
     private City city;
+
+    @Indexed
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy")
     @JsonDeserialize(using = LocalDateDeserializer.class)
     @JsonSerialize(using = LocalDateSerializer.class)
     private LocalDate date;
+
     private Float temperature;
 
     public City getCity() {
