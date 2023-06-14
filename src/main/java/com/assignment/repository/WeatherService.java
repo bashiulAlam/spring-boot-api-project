@@ -1,10 +1,13 @@
 package com.assignment.repository;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -24,16 +27,25 @@ public class WeatherService {
                 .map(City::fromValue)
                 .orElse(null);
 
-        if (localDate == null)
+        if (city != null && localDate == null)
             return weatherRepository.findByCity(givenCity);
-        else if (city == null)
+        else if (city == null && localDate != null)
             return weatherRepository.findByDate(localDate);
-        else
+        else if (city != null && localDate != null)
             return weatherRepository.findByCityAndDate(givenCity, localDate);
+        else return Collections.emptyList();
     }
 
     public Weather save(Weather weather) {
-        weather.setId(UUID.randomUUID());
-        return weatherRepository.save(weather);
+        if (weather.getCity() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "city value cannot be empty or null");
+        else if (weather.getDate() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "date value cannot be empty or null");
+        else if (weather.getTemperature() == null)
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "temperature value cannot be empty or null");
+        else {
+            weather.setId(UUID.randomUUID());
+            return weatherRepository.save(weather);
+        }
     }
 }

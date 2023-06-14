@@ -9,7 +9,8 @@ import org.springframework.web.server.ResponseStatusException;
 @AllArgsConstructor
 public enum City {
     BERLIN("berlin"),
-    MUNICH("munich");
+    MUNICH("munich"),
+    HAMBURG("hamburg");
 
     private String value;
 

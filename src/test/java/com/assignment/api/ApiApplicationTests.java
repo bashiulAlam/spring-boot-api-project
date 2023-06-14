@@ -18,10 +18,12 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultMatcher;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.request.RequestPostProcessor;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -45,13 +47,23 @@ class ApiApplicationTests {
 
 	@Test
 	void test_002_UnauthorizedUserInPostWeatherAPI() throws Exception {
-		mockMvc.perform(MockMvcRequestBuilders.post("/weather"))
-				.andExpect(status().isUnauthorized());
+		Weather weather = Weather.builder()
+				.city(City.BERLIN)
+				.date(LocalDate.parse("23/01/2024", DateTimeFormatter.ofPattern("dd/MM/yyyy")))
+				.temperature(Float.valueOf(35))
+				.build();
+
+		Mockito.when(weatherRepository.save(weather)).thenReturn(weather);
+
+		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/weather")
+				.header("Content-Type", "application/json");
+		mockMvc.perform(request).andExpect(status().isUnauthorized());
 	}
 
 	@Test
 	void test_003_CheckBlankResponseInGetWeatherAPI() throws Exception {
-		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/weather?city=berlin").header("Authorization", "Basic dXNlcjpwYXNzd29yZA==");
+		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.get("/weather?city=berlin")
+				.with(httpBasic("user","password"));
 		mockMvc.perform(request).andExpect(status().isOk());
 	}
 
@@ -65,7 +77,8 @@ class ApiApplicationTests {
 
 		Mockito.when(weatherRepository.save(weather)).thenReturn(weather);
 
-		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/weather").header("Authorization", "Basic dXNlcjpwYXNzd29yZA==");
+		MockHttpServletRequestBuilder request = MockMvcRequestBuilders.post("/weather").with(httpBasic("user","password"))
+				.header("Content-Type", "application/json");
 		mockMvc.perform(request).andExpect(status().isOk());
 	}
 }
