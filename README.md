@@ -84,3 +84,4 @@ This project build GET and POST API using SpringBoot to create and fetch weather
   2. 401 unauthorized case with POST Weather API:
     > curl -d '{"city":"berlin","date":"23/12/2023","temperature":30}' -H 'Content-Type: application/json' http://localhost:8080/weather
   3. 415 media type not supported case with POST Weather API:
+    > curl -d '{"city":"berlin","date":"25/12/2023","temperature":-5.5}' -H 'Authorization: Basic dXNlcjpwYXNzd29yZA==' http://localhost:8080/weather
